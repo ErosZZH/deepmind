@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import pandas as pd
 
-alpha = 5
+alpha = 3
 epoch = 20
 
 def activation(z): # activation function (logistic)
@@ -32,21 +34,32 @@ def importData(path):
     data_set = (data_set - data_set.mean()) / (data_set.max() - data_set.min())
     return data_set, label_set
 
+def predict(W, B, X):
+    return np.around(propagation(W, X, B))
+
+def accurate(Y_pred, y_test):
+    wrong_count = np.count_nonzero(Y_pred - y_test)
+    return (100 - wrong_count) / 100
+    
+
 if __name__ == '__main__':
-    data_set, label_set = importData('/Users/user/Desktop/workspace/execise/python/ml/nn/dataset/datingTestSet.txt')
+    data_set, label_set = importData('/Users/user/Desktop/workspace/my-project/deepmind/dataset/datingTestSet.txt')
     x_train, y_train, x_test, y_test = data_set.head(900).values.T, label_set.head(900).values.T, data_set.tail(100).values.T, label_set.tail(100).values.T
     
-    b = np.zeros((1, 900))
+    b = np.zeros((1, 1))
     w = np.random.randn(3, 1) * 0.01
     assert(w.shape == (3, 1))
-    assert(b.shape == (1, 900))
+    assert(b.shape == (1, 1))
 
     for i in range(epoch):
         print('------------------ epoch' + str(i + 1) + ' -------------------')
         # print('w: %f, b: %f' % (w, b))
         yhat = propagation(w, x_train, b)
         L = lost(y_train, yhat)
-        print('cost function', cost(L, 900))
+        print('cost function', cost(L, 900)[0])
+        Y_pred = predict(w, b, x_test)
+        acc = accurate(Y_pred, y_test)
+        print('Accurate:', acc)
         dw, db = backProp(x_train, y_train, yhat, 900)
         # print('dw: %f, db: %f' % (dw, db))
         w -= alpha * dw
