@@ -15,6 +15,10 @@ class DataSource(object):
     def seperate(self):
         raise NotImplementedError()
 
+    @abstractmethod
+    def normalize(self):
+        raise NotImplementedError()
+
 class CSVDataSource(DataSource):
     def __init__(self, path, *, names):
         if not path:
@@ -28,6 +32,9 @@ class CSVDataSource(DataSource):
         print('Read', self.dataFrame)
 
     def seperate(self):
+        pass
+
+    def normalize(self):
         pass
 
 
