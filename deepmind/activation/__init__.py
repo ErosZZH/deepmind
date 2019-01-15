@@ -7,9 +7,9 @@ class Activation(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def activation_func(self):
+    def prop(self):
         raise NotImplementedError()
 
     @abstractmethod
-    def backProp_func(self):
+    def backProp(self):
         raise NotImplementedError()
