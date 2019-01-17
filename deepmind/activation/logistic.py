@@ -3,7 +3,7 @@
 import numpy as np
 from activation import Activation
 
-class LogisticActivation(Activation):
+class logistic(Activation):
 
     def _activation(self, Z): # activation function (logistic)
         return 1 / (1 + (np.e)**(-Z))
