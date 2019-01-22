@@ -10,7 +10,11 @@ class Relu(Activation):
         return np.maximum(zero, Z)
 
     def prop(self, W, X, B):
-        pass
+        self.A = self._activation(np.dot(W.T, X) + B)
+        return self.A
 
-    def backProp(self, X, Y):
-        pass
+    def backProp(self, X, Y): # just da/dz
+        A = self.A
+        A[A >= 0] = 1
+        A[A < 0] = 0
+        return A
