@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
 from abc import ABCMeta, abstractmethod
 
-class Activation(object):
+class Loss(object):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, *, prevLayer=None, nextLayer=None):
-        self.prevLayer = prevLayer
-        self.nextLayer = nextLayer
+    def __init__(self, *, outputLayer=None):
+        self.outputLayer = outputLayer
 
     @abstractmethod
     def forward(self):

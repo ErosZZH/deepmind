@@ -3,7 +3,7 @@
 import numpy as np
 from activation import Activation
 
-class logistic(Activation):
+class Logistic(Activation):
 
     def _activation(self, Z): # activation function (logistic)
         return 1 / (1 + (np.e)**(-Z))
@@ -12,13 +12,19 @@ class logistic(Activation):
         self.A = self._activation(np.dot(W.T, X) + B)
         return self.A
 
-    def backward(self, X, Y): # dw = x * dz, db = dz
+    def backward(self, X, dA): # dw = x * dz, db = dz
         m = np.size(X, 0)
         A = self.A
-        return (np.dot(X, (A - Y).T) / m, (A - Y) / m)
+        dZ = self._dZ(A, dA)
+        return (self._dW(X, dZ, m), self._dB(dZ, m))
 
-    # def da(y, yhat): # da means lost function deritive to a a = yhat
-    #     return - y / yhat + (1 - y) / (1 - yhat)
+    def _dZ(self, A, dA):
+        if self.nextLayer == 'CategoricalCrossentropy': # dA here is Y
+            return A - dA
+        return A * (1 - A) * dA
 
-    # def dz(y, yhat): # z = w * x + b
-    #     return yhat - y
+    def _dW(self, X, dZ, m):
+        return np.dot(X, dZ.T) / m
+
+    def _dB(self, dZ, m):
+        return dZ / m
