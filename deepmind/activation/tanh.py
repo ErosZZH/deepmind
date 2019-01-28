@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from activation import Activation
+from activation import CommonActivation
 
-class Tanh(Activation):
+class Tanh(CommonActivation):
 
     def _activation(self, Z):
         return (np.e ** Z - np.e ** (-Z)) / (np.e ** Z + np.e ** (-Z))
 
-    def prop(self, W, X, B):
-        pass
-
-    def backProp(self, X, Y):
+    def _dZ(self, A, dA):
         pass
