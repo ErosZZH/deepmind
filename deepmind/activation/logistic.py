@@ -10,13 +10,14 @@ class Logistic(Activation):
 
     def forward(self, W, X, B):
         self.A = self._activation(np.dot(W.T, X) + B)
+        self.W = W
         return self.A
 
     def backward(self, X, dA): # dw = x * dz, db = dz
         m = np.size(X, 0)
         A = self.A
         dZ = self._dZ(A, dA)
-        return (self._dW(X, dZ, m), self._dB(dZ, m))
+        return (self._dW(X, dZ, m), self._dB(dZ, m), np.dot(self.W, dZ))
 
     def _dZ(self, A, dA):
         if self.nextLayer == 'CategoricalCrossentropy': # dA here is Y
