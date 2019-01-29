@@ -9,4 +9,4 @@ class Tanh(CommonActivation):
         return (np.e ** Z - np.e ** (-Z)) / (np.e ** Z + np.e ** (-Z))
 
     def _dZ(self, A, dA):
-        pass
+        return (1 - A ** 2) * dA

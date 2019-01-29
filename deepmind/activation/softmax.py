@@ -6,10 +6,9 @@ from activation import Activation
 class Softmax(Activation):
 
     def _activation(self, Z):
-        return np.e ** Z / np.sum(np.e ** Z)
+        shiftZ = Z - np.max(Z)
+        exps = np.e ** shiftZ
+        return exps / np.sum(exps)
 
-    def prop(self, W, X, B):
-        pass
-
-    def backProp(self, X, Y):
+    def _dZ(self, A, dA):
         pass
