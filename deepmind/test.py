@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from activation.logistic import Logistic
-from activation.relu import Relu
+from layer import Logistic, Relu
 from datasource import CSVDataSource
 from nn import Neuron, Model
-from loss.categorical_crossentropy import CategoricalCrossentropy
+from loss import CategoricalCrossentropy
 import numpy as np
 
 if __name__ == '__main__':

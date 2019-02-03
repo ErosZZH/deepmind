@@ -17,3 +17,16 @@ class Loss(object):
     @abstractmethod
     def backward(self):
         raise NotImplementedError()
+
+'''
+categorical_crossentropy
+'''
+class CategoricalCrossentropy(Loss):
+
+    def forward(self, Y, Yhat):
+        return - (Y * np.log(Yhat) + (1 - Y) * np.log(1 - Yhat))
+
+    def backward(self, Y, Yhat): # dA
+        if self.outputLayer == 'Logistic':
+            return Y
+        return (1 - Y) / (1 - Yhat) - Y / Yhat
