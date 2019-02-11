@@ -6,7 +6,7 @@ class Neuron(object):
 
     def __init__(self, *, activation, layer):
         self.activation = activation
-        self.layer = layer # TODO use real layer
+        self.layer = layer
 
     def forward(self, W, B, A):
         return self.activation.forward(W[self.layer - 1], A[self.layer - 1], B[self.layer - 1])
@@ -17,32 +17,44 @@ class Neuron(object):
 
 class Model(object):
 
-    def __init__(self, nn, *, alpha=0.01): # need to pass the shape of nn
+    def __init__(self, layers, *, alpha=0.001): # need to pass the shape of nn
         self.alpha = alpha
-        self.nn = nn
-        self.layer = [3, 1] # TODO init layer with neuron num of each layer
+        self.layers = layers
 
     def cost(self, L):
         return (np.sum(L, axis=1) / self.m)[0]
 
     def compile(self, *, loss):
-        self.loss = loss
+        nodes = []
+        layers = []
+        for k, v in enumerate(self.layers):
+            nodes.append(v['node'])
+            prevLayer = None if k == 0 else self.layers[k - 1]['activation'].__class__.__name__
+            nextLayer = loss.__class__.__name__ if k == len(self.layers) - 1 else self.layers[k + 1]['activation'].__class__.__name__
+            layer = k + 1
+            layers.append(Neuron(activation=v['activation'](prevLayer=prevLayer, nextLayer=nextLayer), layer=layer))
+        self.layer = nodes
+        self.nn = layers
+        self.loss = loss(outputLayer=self.layers[-1]['activation'].__class__.__name__)
     
     def train(self):
         for i in range(self.epoch):
             print('------------------ epoch' + str(i + 1) + ' -------------------')
-            self.A[1] = self.nn[0].forward(self.W, self.B, self.A)
-            Yhat = self.nn[1].forward(self.W, self.B, self.A)
+            Yhat = None
+            for index, layer in enumerate(self.nn):
+                if index < len(self.nn) - 1:
+                    self.A[index + 1] = layer.forward(self.W, self.B, self.A)
+                else:
+                    Yhat = layer.forward(self.W, self.B, self.A)
             L = self.loss.forward(self.Y_train, Yhat)
             acc = self.predict(self.Y_train, Yhat)
             print('cost:', self.cost(L), ', acc:', acc)
             dA = self.loss.backward(self.Y_train, Yhat)
-            dW1, dB1, dA1 = self.nn[1].backward(self.A, dA)
-            dW0, dB0, dA0 = self.nn[0].backward(self.A, dA1)
-            self.W[1] = self.W[1] - self.alpha * dW1
-            self.B[1] = self.B[1] - self.alpha * dB1
-            self.W[0] = self.W[0] - self.alpha * dW0
-            self.B[0] = self.B[0] - self.alpha * dB0
+            length = len(self.nn) - 1
+            for index, layer in enumerate(reversed(self.nn)):
+                dW, dB, dA = layer.backward(self.A, dA)
+                self.W[length - index] = self.W[length - index] - self.alpha * dW
+                self.B[length - index] = self.B[length - index] - self.alpha * dB
 
     def predict(self, Y, A):
         Y_pred = np.around(A)
@@ -68,10 +80,14 @@ class Model(object):
         m = np.size(X_test, 1)
         B = self.B
         # B[0] = B[0][:, :m]
-        B[0] = np.full((1, m), np.sum(B[0]) / m)
-        B[1] = np.full((1, m), np.sum(B[1]) / m)
+        for k, v in enumerate(B):
+            B[k] = np.full((1, m), np.sum(v) / m)
         A = [X_test, 0]
-        A[1] = self.nn[0].forward(self.W, B, A)
-        Yhat = self.nn[1].forward(self.W, B, A)
+        Yhat = None
+        for index, layer in enumerate(self.nn):
+            if index < len(self.nn) - 1:
+                A[index + 1] = layer.forward(self.W, B, A)
+            else:
+                Yhat = layer.forward(self.W, B, A)
         acc = self.predict(Y_test, Yhat)
         print('Final accurate:', acc)
