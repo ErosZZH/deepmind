@@ -48,7 +48,7 @@ class Model(object):
                     Yhat = layer.forward(self.W, self.B, self.A)
             L = self.loss.forward(self.Y_train, Yhat)
             acc = self.predict(self.Y_train, Yhat)
-            print('cost:', self.cost(L), ', acc:', acc)
+            print('cost:', self.cost(L), ', accurate:', acc)
             dA = self.loss.backward(self.Y_train, Yhat)
             length = len(self.nn) - 1
             for index, layer in enumerate(reversed(self.nn)):
