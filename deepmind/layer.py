@@ -27,7 +27,7 @@ class CommonActivation(Activation):
 
     @abstractmethod
     def forward(self, W, X, B):
-        self.A = self._activation(np.dot(W.T, X) + B)
+        self.A = self._activation(np.dot(W, X) + B)
         self.W = W
         return self.A
 
@@ -36,7 +36,7 @@ class CommonActivation(Activation):
         m = np.size(X, 0)
         A = self.A
         dZ = self._dZ(A, dA)
-        return (self._dW(X, dZ, m), self._dB(dZ, m), np.dot(self.W, dZ))
+        return (self._dW(X, dZ, m), self._dB(dZ, m), np.dot(self.W.T, dZ))
 
     @abstractmethod
     def _dZ(self, A, dA):
@@ -44,7 +44,7 @@ class CommonActivation(Activation):
 
     @abstractmethod
     def _dW(self, X, dZ, m):
-        return np.dot(X, dZ.T) / m
+        return np.dot(dZ, X.T) / m
 
     @abstractmethod
     def _dB(self, dZ, m):
@@ -72,7 +72,7 @@ class Tanh(CommonActivation):
         return (np.e ** Z - np.e ** (-Z)) / (np.e ** Z + np.e ** (-Z))
 
     def _dZ(self, A, dA):
-        return (1 - A ** 2) * d
+        return (1 - A ** 2) * dA
 
 '''
 Relu

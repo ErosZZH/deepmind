@@ -68,7 +68,7 @@ class Model(object):
         n[0] = np.size(X_train, 0)
         self.n = n
         self.m = np.size(X_train, 1)
-        self.W = [np.random.randn(self.n[i], self.n[i + 1]) * 0.01 for i in range(len(self.layer))]
+        self.W = [np.random.randn(self.n[i + 1], self.n[i]) * 0.01 for i in range(len(self.layer))]
         self.B = [np.zeros((self.n[i + 1], self.m)) for i in range(len(self.layer))]
         A = [0] * len(self.layer)
         A[0] = X_train

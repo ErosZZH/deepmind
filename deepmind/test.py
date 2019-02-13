@@ -15,5 +15,5 @@ if __name__ == '__main__':
         {'node': 1, 'activation': Logistic}
     ], alpha=0.0001)
     model.compile(loss=CategoricalCrossentropy)
-    model.fit(x_train, y_train, epoch=10)
+    model.fit(x_train, y_train, epoch=20)
     model.evaluate(x_test, y_test)
